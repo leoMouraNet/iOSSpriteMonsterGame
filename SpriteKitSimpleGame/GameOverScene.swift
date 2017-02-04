@@ -26,8 +26,8 @@ class GameOverScene: SKScene {
             SKAction.wait(forDuration: 3.0),
             SKAction.run() {
                 // 5
-                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-                let scene = GameScene(size: size)
+                let reveal = SKTransition.doorsCloseVertical(withDuration: 0.5)
+                let scene = GameStartScene(size: size)
                 self.view?.presentScene(scene, transition:reveal)
             }
             ]))

@@ -81,18 +81,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Create sprite
         let monster = SKSpriteNode(imageNamed: "monster")
-        monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size) // 1
-        monster.physicsBody?.isDynamic = true // 2
-        monster.physicsBody?.categoryBitMask = PhysicsCategory.Monster // 3
-        monster.physicsBody?.contactTestBitMask = PhysicsCategory.Projectile // 4
-        monster.physicsBody?.collisionBitMask = PhysicsCategory.None // 5
+        monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size)
+        monster.physicsBody?.isDynamic = true
+        monster.physicsBody?.categoryBitMask = PhysicsCategory.Monster
+        monster.physicsBody?.contactTestBitMask = PhysicsCategory.Projectile
+        monster.physicsBody?.collisionBitMask = PhysicsCategory.None
         
-        // Determine where to spawn the monster along the Y axis
-        let actualY = random(min: monster.size.height/2, max: size.height - monster.size.height/2)
+        // Determine where to spawn the monster along the X axis
+        let actualX = random(min: monster.size.width/2, max: size.width - monster.size.width/2)
         
         // Position the monster slightly off-screen along the right edge,
         // and along a random position along the Y axis as calculated above
-        monster.position = CGPoint(x: size.width + monster.size.width/2, y: actualY)
+        monster.position = CGPoint(x: actualX, y: size.height + monster.size.height/2)
         
         // Add the monster to the scene
         addChild(monster)
@@ -101,7 +101,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let actualDuration = random(min: CGFloat(2.0), max: CGFloat(4.0))
         
         // Create the actions
-        let actionMove = SKAction.move(to: CGPoint(x: -monster.size.width/2, y: actualY), duration: TimeInterval(actualDuration))
+        let actionMove = SKAction.move(to: CGPoint(x: actualX, y: -monster.size.height/2), duration: TimeInterval(actualDuration))
         let actionMoveDone = SKAction.removeFromParent()
         let loseAction = SKAction.run() {
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
@@ -127,14 +127,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // 3 - Determine offset of location to projectile
         let offset = touchLocation - projectile.position
-
+        
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.Projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.Monster
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.None
         projectile.physicsBody?.usesPreciseCollisionDetection = true
-
+        
         // 4 - Bail out if you are shooting down or backwards
         if (offset.x < 0) { return }
         
@@ -159,6 +159,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
         print("Hit")
+        run(SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false))
         projectile.removeFromParent()
         monster.removeFromParent()
         monstersDestroyed += 1
