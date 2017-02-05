@@ -42,16 +42,20 @@ extension CGPoint {
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    // 1
-    let player = SKSpriteNode(imageNamed: "player")
+    let background = SKSpriteNode(imageNamed:"skyBackground")
+    let player = SKSpriteNode(imageNamed: "rocketmouse_run01")
+    var isFingerOnPlayer = false
     var monstersDestroyed = 0
     
     override func didMove(to view: SKView) {
-        // 2
-        backgroundColor = SKColor.blue
-        // 3
+        //backgroundColor = SKColor.blue
+        background.position = CGPoint(x: 0, y: 0)
+        background.zPosition = 1
+        addChild(background)
+
         player.position = CGPoint(x: size.width * 0.1, y: size.height * 0.5)
-        // 4
+        player.size = CGSize(width: 60, height: 60)
+        player.zPosition = 3
         addChild(player)
         
         physicsWorld.gravity = CGVector.zero
@@ -80,7 +84,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func addMonster() {
         
         // Create sprite
-        let monster = SKSpriteNode(imageNamed: "monster")
+        let monster = SKSpriteNode(imageNamed:"frame-1")
+        monster.zPosition = 3
+        monster.size = CGSize(width: 50, height: 50)
         monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size)
         monster.physicsBody?.isDynamic = true
         monster.physicsBody?.categoryBitMask = PhysicsCategory.Monster
@@ -103,16 +109,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Create the actions
         let actionMove = SKAction.move(to: CGPoint(x: actualX, y: -monster.size.height/2), duration: TimeInterval(actualDuration))
         let actionMoveDone = SKAction.removeFromParent()
-        let loseAction = SKAction.run() {
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size, won: false)
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
-        monster.run(SKAction.sequence([actionMove, loseAction, actionMoveDone]))
+        //let loseAction = SKAction.run() {
+            //let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            //let gameOverScene = GameOverScene(size: self.size, won: false)
+            //self.view?.presentScene(gameOverScene, transition: reveal)
+        //}
+        monster.run(SKAction.sequence([actionMove, actionMoveDone]))
         
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first
+        let touchLocation = touch!.location(in: self)
+        
+        if (player.contains(touchLocation)) {
+            isFingerOnPlayer = true
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isFingerOnPlayer {
+            let touch = touches.first
+            let touchLocation = touch!.location(in: self)
+            let previousLocation = touch!.previousLocation(in: self)
+
+            var playerY = player.position.y + (touchLocation.y - previousLocation.y)
+            
+            playerY = max(playerY, player.size.width/2)
+            playerY = min(playerY, size.width - player.size.width/2)
+            // 6
+            player.position = CGPoint(x: player.position.x, y: playerY)
+        }
+    }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        isFingerOnPlayer = false
         run(SKAction.playSoundFileNamed("pew-pew-lei.caf", waitForCompletion: false))
         
         // 1 - Choose one of the touches to work with
@@ -122,8 +153,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let touchLocation = touch.location(in: self)
         
         // 2 - Set up initial location of projectile
-        let projectile = SKSpriteNode(imageNamed: "projectile")
+        let projectile = SKSpriteNode(imageNamed: "flame1")
         projectile.position = player.position
+        projectile.zPosition = 2
+        projectile.size = CGSize(width: 40, height: 40)
         
         // 3 - Determine offset of location to projectile
         let offset = touchLocation - projectile.position
