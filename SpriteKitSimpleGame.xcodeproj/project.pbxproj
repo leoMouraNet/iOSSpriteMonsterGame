@@ -18,6 +18,7 @@
 		9B9F748A1E4170B100948FC2 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9F74891E4170B100948FC2 /* GameOverScene.swift */; };
 		9B9F748C1E41730400948FC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B9F748B1E41730400948FC2 /* Assets.xcassets */; };
 		AEF872861E464B730050CECE /* laser.wav in Resources */ = {isa = PBXBuildFile; fileRef = AEF872851E464B730050CECE /* laser.wav */; };
+		AEF8EEB31E47BAB40042EDEF /* player.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AEF8EEB21E47BAB40042EDEF /* player.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		9B9F74891E4170B100948FC2 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		9B9F748B1E41730400948FC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AEF872851E464B730050CECE /* laser.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = laser.wav; path = ../../../../Downloads/laser.wav; sourceTree = "<group>"; };
+		AEF8EEB21E47BAB40042EDEF /* player.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = player.atlas; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 		9B9F74651E41646F00948FC2 /* SpriteKitSimpleGame */ = {
 			isa = PBXGroup;
 			children = (
+				AEF8EEB21E47BAB40042EDEF /* player.atlas */,
 				AEF872851E464B730050CECE /* laser.wav */,
 				9B9F748B1E41730400948FC2 /* Assets.xcassets */,
 				9B9F74661E41646F00948FC2 /* AppDelegate.swift */,
@@ -145,6 +148,7 @@
 				9B9F74721E41646F00948FC2 /* Main.storyboard in Resources */,
 				AEF872861E464B730050CECE /* laser.wav in Resources */,
 				9B9F74771E41646F00948FC2 /* LaunchScreen.storyboard in Resources */,
+				AEF8EEB31E47BAB40042EDEF /* player.atlas in Resources */,
 				9B9F74881E416FD800948FC2 /* pew-pew-lei.caf in Resources */,
 				9B9F748C1E41730400948FC2 /* Assets.xcassets in Resources */,
 			);

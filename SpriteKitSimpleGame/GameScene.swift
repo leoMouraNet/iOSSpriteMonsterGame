@@ -4,8 +4,8 @@ import GameplayKit
 struct PhysicsCategory {
     static let None      : UInt32 = 0
     static let All       : UInt32 = UInt32.max
-    static let Monster   : UInt32 = 0b1       // 1
-    static let Projectile: UInt32 = 0b10      // 2
+    static let Monster   : UInt32 = 0b1
+    static let Projectile: UInt32 = 0b10
 }
 
 func + (left: CGPoint, right: CGPoint) -> CGPoint {
@@ -43,7 +43,11 @@ extension CGPoint {
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let background = SKSpriteNode(imageNamed:"skyBackground")
-    let player = SKSpriteNode(imageNamed: "rocketmouse_run01")
+    let player = SKSpriteNode()
+    let playerAtlas = SKTextureAtlas(named:"player.atlas")
+    var spriteArray = Array<SKTexture>();
+    
+    let flame = SKSpriteNode(imageNamed:"flame2")
     var isFingerOnPlayer = false
     var monstersDestroyed = 0
     
@@ -53,9 +57,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background.zPosition = 1
         addChild(background)
 
+        spriteArray.append(playerAtlas.textureNamed("rocketmouse_stop"));
+        spriteArray.append(playerAtlas.textureNamed("rocketmouse_fly"));
+        spriteArray.append(playerAtlas.textureNamed("rocketmouse_dead"));
+
+        player.texture = spriteArray[0]
         player.position = CGPoint(x: size.width * 0.1, y: size.height * 0.5)
         player.size = CGSize(width: 60, height: 60)
-        player.zPosition = 3
+        player.zPosition = 4
         addChild(player)
         
         physicsWorld.gravity = CGVector.zero
@@ -85,7 +94,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Create sprite
         let monster = SKSpriteNode(imageNamed:"frame-1")
-        monster.zPosition = 3
+        monster.zPosition = 4
         monster.size = CGSize(width: 50, height: 50)
         monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size)
         monster.physicsBody?.isDynamic = true
@@ -124,6 +133,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (player.contains(touchLocation)) {
             isFingerOnPlayer = true
+            player.texture = spriteArray[1]
+            flame.position = CGPoint(x: player.position.x-30, y: player.position.y-24)
+            flame.size = CGSize(width: 25, height: 25)
+            flame.zPosition = 3
+            addChild(flame)
         }
     }
     
@@ -137,13 +151,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             playerY = max(playerY, player.size.width/2)
             playerY = min(playerY, size.width - player.size.width/2)
-            // 6
+            
             player.position = CGPoint(x: player.position.x, y: playerY)
+            flame.position = CGPoint(x: player.position.x-30, y: player.position.y-24)
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         isFingerOnPlayer = false
+        flame.removeFromParent()
+        player.texture = spriteArray[0]
         run(SKAction.playSoundFileNamed("pew-pew-lei.caf", waitForCompletion: false))
         
         // 1 - Choose one of the touches to work with
@@ -192,7 +209,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
         print("Hit")
-        run(SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false))
+        //run(SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false))
         projectile.removeFromParent()
         monster.removeFromParent()
         monstersDestroyed += 1
@@ -205,7 +222,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func didBegin(_ contact: SKPhysicsContact) {
         
-        // 1
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
         if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
@@ -216,7 +232,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody = contact.bodyA
         }
         
-        // 2
         if ((firstBody.categoryBitMask & PhysicsCategory.Monster != 0) &&
             (secondBody.categoryBitMask & PhysicsCategory.Projectile != 0)) {
             if let monster = firstBody.node as? SKSpriteNode, let
@@ -224,6 +239,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 projectileDidCollideWithMonster(projectile: projectile, monster: monster)
             }
         }
+
+        if ((firstBody.categoryBitMask & PhysicsCategory.Monster != 0) &&
+            (secondBody.categoryBitMask & PhysicsCategory.Projectile != 0)) {
+            if let monster = firstBody.node as? SKSpriteNode, let
+                projectile = secondBody.node as? SKSpriteNode {
+                projectileDidCollideWithMonster(projectile: projectile, monster: monster)
+            }
+        }
+        
         
     }
 
