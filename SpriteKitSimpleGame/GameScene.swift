@@ -44,8 +44,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let background = SKSpriteNode(imageNamed:"skyBackground")
     let player = SKSpriteNode()
+
     let playerAtlas = SKTextureAtlas(named:"player.atlas")
-    var spriteArray = Array<SKTexture>();
+    let explosionAtlas = SKTextureAtlas(named:"explosion.atlas")
+    var playerSpriteArray = Array<SKTexture>();
+    var explosionSpriteArray = Array<SKTexture>();
     
     let flame = SKSpriteNode(imageNamed:"flame2")
     var isFingerOnPlayer = false
@@ -57,11 +60,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background.zPosition = 1
         addChild(background)
 
-        spriteArray.append(playerAtlas.textureNamed("rocketmouse_stop"));
-        spriteArray.append(playerAtlas.textureNamed("rocketmouse_fly"));
-        spriteArray.append(playerAtlas.textureNamed("rocketmouse_dead"));
+        playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_stop"))
+        playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_fly"))
+        playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_dead"))
+        
+        for i in 1..<16 {
+            let imageName = "explosion_\(i)"
+            explosionSpriteArray.append(explosionAtlas.textureNamed(imageName))
+        }
 
-        player.texture = spriteArray[0]
+        player.texture = playerSpriteArray[0]
         player.position = CGPoint(x: size.width * 0.1, y: size.height * 0.5)
         player.size = CGSize(width: 60, height: 60)
         player.zPosition = 4
@@ -113,7 +121,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(monster)
         
         // Determine speed of the monster
-        let actualDuration = random(min: CGFloat(2.0), max: CGFloat(4.0))
+        let actualDuration = random(min: CGFloat(2.0), max: CGFloat(6.0))
         
         // Create the actions
         let actionMove = SKAction.move(to: CGPoint(x: actualX, y: -monster.size.height/2), duration: TimeInterval(actualDuration))
@@ -133,7 +141,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (player.contains(touchLocation)) {
             isFingerOnPlayer = true
-            player.texture = spriteArray[1]
+            player.texture = playerSpriteArray[1]
             flame.position = CGPoint(x: player.position.x-30, y: player.position.y-24)
             flame.size = CGSize(width: 25, height: 25)
             flame.zPosition = 3
@@ -158,57 +166,69 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        isFingerOnPlayer = false
-        flame.removeFromParent()
-        player.texture = spriteArray[0]
-        run(SKAction.playSoundFileNamed("pew-pew-lei.caf", waitForCompletion: false))
-        
-        // 1 - Choose one of the touches to work with
-        guard let touch = touches.first else {
+        if (isFingerOnPlayer) {
+            isFingerOnPlayer = false
+            flame.removeFromParent()
+            player.texture = playerSpriteArray[0]
             return
+        } else {
+            run(SKAction.playSoundFileNamed("pew-pew-lei.caf", waitForCompletion: false))
+            
+            // 1 - Choose one of the touches to work with
+            guard let touch = touches.first else {
+                return
+            }
+            let touchLocation = touch.location(in: self)
+            
+            // 2 - Set up initial location of projectile
+            let projectile = SKSpriteNode(imageNamed: "flame1")
+            projectile.position = player.position
+            projectile.zPosition = 2
+            projectile.size = CGSize(width: 40, height: 40)
+            
+            // 3 - Determine offset of location to projectile
+            let offset = touchLocation - projectile.position
+            
+            projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
+            projectile.physicsBody?.isDynamic = true
+            projectile.physicsBody?.categoryBitMask = PhysicsCategory.Projectile
+            projectile.physicsBody?.contactTestBitMask = PhysicsCategory.Monster
+            projectile.physicsBody?.collisionBitMask = PhysicsCategory.None
+            projectile.physicsBody?.usesPreciseCollisionDetection = true
+            
+            // 4 - Bail out if you are shooting down or backwards
+            //if (offset.x < 0) { return }
+            
+            // 5 - OK to add now - you've double checked position
+            addChild(projectile)
+            
+            // 6 - Get the direction of where to shoot
+            let direction = offset.normalized()
+            
+            // 7 - Make it shoot far enough to be guaranteed off screen
+            let shootAmount = direction * 1000
+            
+            // 8 - Add the shoot amount to the current position
+            let realDest = shootAmount + projectile.position
+            
+            // 9 - Create the actions
+            let actionMove = SKAction.move(to: realDest, duration: 2.0)
+            let actionMoveDone = SKAction.removeFromParent()
+            projectile.run(SKAction.sequence([actionMove, actionMoveDone]))
         }
-        let touchLocation = touch.location(in: self)
-        
-        // 2 - Set up initial location of projectile
-        let projectile = SKSpriteNode(imageNamed: "flame1")
-        projectile.position = player.position
-        projectile.zPosition = 2
-        projectile.size = CGSize(width: 40, height: 40)
-        
-        // 3 - Determine offset of location to projectile
-        let offset = touchLocation - projectile.position
-        
-        projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
-        projectile.physicsBody?.isDynamic = true
-        projectile.physicsBody?.categoryBitMask = PhysicsCategory.Projectile
-        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.Monster
-        projectile.physicsBody?.collisionBitMask = PhysicsCategory.None
-        projectile.physicsBody?.usesPreciseCollisionDetection = true
-        
-        // 4 - Bail out if you are shooting down or backwards
-        if (offset.x < 0) { return }
-        
-        // 5 - OK to add now - you've double checked position
-        addChild(projectile)
-        
-        // 6 - Get the direction of where to shoot
-        let direction = offset.normalized()
-        
-        // 7 - Make it shoot far enough to be guaranteed off screen
-        let shootAmount = direction * 1000
-        
-        // 8 - Add the shoot amount to the current position
-        let realDest = shootAmount + projectile.position
-        
-        // 9 - Create the actions
-        let actionMove = SKAction.move(to: realDest, duration: 2.0)
-        let actionMoveDone = SKAction.removeFromParent()
-        projectile.run(SKAction.sequence([actionMove, actionMoveDone]))
-        
     }
     
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
         print("Hit")
+        let explosion = SKSpriteNode(texture: explosionSpriteArray[0])
+        
+        explosion.position = monster.position
+        let animationAction = SKAction.animate(with: explosionSpriteArray, timePerFrame: 0.1)
+        let removeExplosion = SKAction.removeFromParent()
+        let explosionAction = SKAction.sequence([animationAction,removeExplosion])
+        explosion.run(explosionAction)
+        explosion.zPosition = 3
+        addChild(explosion)
         //run(SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false))
         projectile.removeFromParent()
         monster.removeFromParent()
