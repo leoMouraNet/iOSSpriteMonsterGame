@@ -53,6 +53,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let flame = SKSpriteNode(imageNamed:"flame2")
     var isFingerOnPlayer = false
     var monstersDestroyed = 0
+    var offset = CGPoint()
     
     override func didMove(to view: SKView) {
         //backgroundColor = SKColor.blue
@@ -85,9 +86,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 ])
         ))
         
-        let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
-        backgroundMusic.autoplayLooped = true
-        addChild(backgroundMusic)
+        //let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
+        //backgroundMusic.autoplayLooped = true
+        //addChild(backgroundMusic)
     }
     
     func random() -> CGFloat {
@@ -138,7 +139,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
         let touchLocation = touch!.location(in: self)
-        
+     
         if (player.contains(touchLocation)) {
             isFingerOnPlayer = true
             player.texture = playerSpriteArray[1]
@@ -154,14 +155,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let touch = touches.first
             let touchLocation = touch!.location(in: self)
             let previousLocation = touch!.previousLocation(in: self)
-
+            offset = touchLocation - previousLocation
             var playerY = player.position.y + (touchLocation.y - previousLocation.y)
             
-            playerY = max(playerY, player.size.width/2)
-            playerY = min(playerY, size.width - player.size.width/2)
+            playerY = max(playerY, player.size.height/2)
+            playerY = min(playerY, size.height - player.size.height/2)
             
-            player.position = CGPoint(x: player.position.x, y: playerY)
-            flame.position = CGPoint(x: player.position.x-30, y: player.position.y-24)
+
+            var playerX = player.position.x + (touchLocation.x - previousLocation.x)
+            
+            playerX = max(playerX, player.size.width/2)
+            playerX = min(playerX, size.width - player.size.width/2)
+
+            // Determine offset of location to flip
+            if (offset.x <= 0 && player.xScale>0) {
+                player.xScale = player.xScale * -1
+                flame.xScale = flame.xScale * -1
+            }
+            if (offset.x > 0 && player.xScale<0) {
+                player.xScale = player.xScale * -1;
+                flame.xScale = flame.xScale * -1;
+            }
+            
+            var flameX = CGFloat()
+            if (player.xScale > 0) {
+                flameX = -30
+            } else {
+                flameX = 30
+            }
+            
+            player.position = CGPoint(x: playerX, y: playerY)
+            flame.position = CGPoint(x: player.position.x + flameX, y: player.position.y-24)
         }
     }
     
@@ -172,7 +196,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.texture = playerSpriteArray[0]
             return
         } else {
-            run(SKAction.playSoundFileNamed("pew-pew-lei.caf", waitForCompletion: false))
+            run(SKAction.playSoundFileNamed("fireball.caf", waitForCompletion: false))
             
             // 1 - Choose one of the touches to work with
             guard let touch = touches.first else {
@@ -235,7 +259,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         monstersDestroyed += 1
         if (monstersDestroyed > 10) {
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size, won: true)
+            let gameOverScene = GameOverScene(size: self.size, won: true, score: monstersDestroyed)
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
     }
