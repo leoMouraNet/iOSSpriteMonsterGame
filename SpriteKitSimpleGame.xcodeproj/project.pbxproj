@@ -17,6 +17,8 @@
 		9B9F74881E416FD800948FC2 /* pew-pew-lei.caf in Resources */ = {isa = PBXBuildFile; fileRef = 9B9F74871E416FD800948FC2 /* pew-pew-lei.caf */; };
 		9B9F748A1E4170B100948FC2 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9F74891E4170B100948FC2 /* GameOverScene.swift */; };
 		9B9F748C1E41730400948FC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B9F748B1E41730400948FC2 /* Assets.xcassets */; };
+		AE35905A1E4C2C87001948C5 /* GameSceneMutiplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3590591E4C2C87001948C5 /* GameSceneMutiplayer.swift */; };
+		AE35905C1E4C4CE5001948C5 /* GameOverSceneMultiplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE35905B1E4C4CE5001948C5 /* GameOverSceneMultiplayer.swift */; };
 		AEF8EEB31E47BAB40042EDEF /* player.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AEF8EEB21E47BAB40042EDEF /* player.atlas */; };
 		AEF8EEB51E47D5A80042EDEF /* explosion.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AEF8EEB41E47D5A70042EDEF /* explosion.atlas */; };
 /* End PBXBuildFile section */
@@ -36,6 +38,8 @@
 		9B9F74871E416FD800948FC2 /* pew-pew-lei.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pew-pew-lei.caf"; path = "Sounds/pew-pew-lei.caf"; sourceTree = "<group>"; };
 		9B9F74891E4170B100948FC2 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		9B9F748B1E41730400948FC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AE3590591E4C2C87001948C5 /* GameSceneMutiplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GameSceneMutiplayer.swift; path = ../GameSceneMutiplayer.swift; sourceTree = "<group>"; };
+		AE35905B1E4C4CE5001948C5 /* GameOverSceneMultiplayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GameOverSceneMultiplayer.swift; path = ../GameOverSceneMultiplayer.swift; sourceTree = "<group>"; };
 		AEF8EEB21E47BAB40042EDEF /* player.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = player.atlas; sourceTree = "<group>"; };
 		AEF8EEB41E47D5A70042EDEF /* explosion.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = explosion.atlas; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,6 +79,7 @@
 				9B9F748B1E41730400948FC2 /* Assets.xcassets */,
 				9B9F74661E41646F00948FC2 /* AppDelegate.swift */,
 				9B9F746C1E41646F00948FC2 /* GameScene.swift */,
+				AE3590591E4C2C87001948C5 /* GameSceneMutiplayer.swift */,
 				9B9F746E1E41646F00948FC2 /* GameViewController.swift */,
 				9B9F74701E41646F00948FC2 /* Main.storyboard */,
 				9B3312711E4956A300E47F2B /* explosion.caf */,
@@ -83,6 +88,7 @@
 				9B9F74851E416FCF00948FC2 /* background-music-aac.caf */,
 				9B9F74751E41646F00948FC2 /* LaunchScreen.storyboard */,
 				9B9F74781E41646F00948FC2 /* Info.plist */,
+				AE35905B1E4C4CE5001948C5 /* GameOverSceneMultiplayer.swift */,
 				9B9F74891E4170B100948FC2 /* GameOverScene.swift */,
 				9B3C0A191E4412A6009A8031 /* GameStartScene.swift */,
 			);
@@ -169,6 +175,8 @@
 				9B9F746D1E41646F00948FC2 /* GameScene.swift in Sources */,
 				9B9F746F1E41646F00948FC2 /* GameViewController.swift in Sources */,
 				9B9F748A1E4170B100948FC2 /* GameOverScene.swift in Sources */,
+				AE35905A1E4C2C87001948C5 /* GameSceneMutiplayer.swift in Sources */,
+				AE35905C1E4C4CE5001948C5 /* GameOverSceneMultiplayer.swift in Sources */,
 				9B9F74671E41646F00948FC2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

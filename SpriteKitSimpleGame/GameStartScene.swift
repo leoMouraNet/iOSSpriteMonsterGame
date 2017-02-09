@@ -40,7 +40,7 @@ class GameStartScene: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let reveal = SKTransition.doorsOpenVertical(withDuration: 0.5)
-        let scene = GameScene(size: size)
+        let scene = GameSceneMultiplayer(size: size)
         self.view?.presentScene(scene, transition:reveal)
 
     }
