@@ -55,12 +55,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var monstersDestroyed = 0
     var offset = CGPoint()
     
+    var levelTimerLabel = SKLabelNode(fontNamed: "Chalkduster")
+    
+    //Immediately after leveTimerValue variable is set, update label's text
+    var levelTimerValue: Int = 90 {
+        didSet {
+            if (levelTimerValue<10) {
+                levelTimerLabel.fontColor = SKColor.red
+            }
+            levelTimerLabel.text = "Timer: \(levelTimerValue)"
+        }
+    }
+    
     override func didMove(to view: SKView) {
         //backgroundColor = SKColor.blue
         background.position = CGPoint(x: 0, y: 0)
         background.zPosition = 1
         addChild(background)
+        
+        levelTimerLabel.fontColor = SKColor.yellow
+        levelTimerLabel.fontSize = 30
+        levelTimerLabel.position = CGPoint(x: size.width/2, y: size.height/2+150)
+        levelTimerLabel.text = "Timer: \(levelTimerValue)"
+        levelTimerLabel.zPosition = 5
+        addChild(levelTimerLabel)
 
+        let wait = SKAction.wait(forDuration: 1) //change countdown speed here
+        let block = SKAction.run({
+            [unowned self] in
+            
+            if self.levelTimerValue > 0{
+                self.levelTimerValue -= 1
+            }else{
+                self.removeAction(forKey: "countdown")
+                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+                let gameOverScene = GameOverScene(size: self.size, won: true, score: self.monstersDestroyed)
+                self.view?.presentScene(gameOverScene, transition: reveal)
+            }
+        })
+        let sequence = SKAction.sequence([wait,block])
+        
+        run(SKAction.repeatForever(sequence), withKey: "countdown")
+        
         playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_stop"))
         playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_fly"))
         playerSpriteArray.append(playerAtlas.textureNamed("rocketmouse_dead"))
@@ -220,8 +256,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             projectile.physicsBody?.collisionBitMask = PhysicsCategory.None
             projectile.physicsBody?.usesPreciseCollisionDetection = true
             
-            // 4 - Bail out if you are shooting down or backwards
-            //if (offset.x < 0) { return }
+            // 4 - check if you are shooting down or backwards
+            // Determine offset of location to flip
+            if (offset.x <= 0 && player.xScale>0) {
+                player.xScale = player.xScale * -1
+                flame.xScale = flame.xScale * -1
+            }
+            
+            if (offset.x > 0 && player.xScale<0) {
+                player.xScale = player.xScale * -1
+                flame.xScale = flame.xScale * -1
+            }
+            
+            if (offset.x <= 0) {
+                projectile.xScale = projectile.xScale * -1
+            }
+            
+            if (offset.y <= 0) {
+                projectile.yScale = projectile.yScale * -1
+            }
             
             // 5 - OK to add now - you've double checked position
             addChild(projectile)
@@ -257,11 +310,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         projectile.removeFromParent()
         monster.removeFromParent()
         monstersDestroyed += 1
-        if (monstersDestroyed > 10) {
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size, won: true, score: monstersDestroyed)
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
