@@ -58,7 +58,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var levelTimerLabel = SKLabelNode(fontNamed: "Chalkduster")
     
     //Immediately after leveTimerValue variable is set, update label's text
-    var levelTimerValue: Int = 90 {
+    var levelTimerValue: Int = 30 {
         didSet {
             if (levelTimerValue<10) {
                 levelTimerLabel.fontColor = SKColor.red
@@ -75,7 +75,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         levelTimerLabel.fontColor = SKColor.yellow
         levelTimerLabel.fontSize = 30
-        levelTimerLabel.position = CGPoint(x: size.width/2, y: size.height/2+150)
+        levelTimerLabel.position = CGPoint(x: size.width/2, y: size.height/2+120)
         levelTimerLabel.text = "Timer: \(levelTimerValue)"
         levelTimerLabel.zPosition = 5
         addChild(levelTimerLabel)
@@ -122,9 +122,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 ])
         ))
         
-        //let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
-        //backgroundMusic.autoplayLooped = true
-        //addChild(backgroundMusic)
+        let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
+        backgroundMusic.autoplayLooped = true
+        addChild(backgroundMusic)
     }
     
     func random() -> CGFloat {

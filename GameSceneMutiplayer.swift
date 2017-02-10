@@ -27,7 +27,7 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
     var levelTimerLabel = SKLabelNode(fontNamed: "Chalkduster")
     
     //Immediately after leveTimerValue variable is set, update label's text
-    var levelTimerValue: Int = 90 {
+    var levelTimerValue: Int = 30 {
         didSet {
             if (levelTimerValue<10) {
                 levelTimerLabel.fontColor = SKColor.red
@@ -44,7 +44,7 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
         
         levelTimerLabel.fontColor = SKColor.yellow
         levelTimerLabel.fontSize = 30
-        levelTimerLabel.position = CGPoint(x: size.width/2, y: size.height/2+150)
+        levelTimerLabel.position = CGPoint(x: size.width/2, y: size.height/2+120)
         levelTimerLabel.text = "Timer: \(levelTimerValue)"
         levelTimerLabel.zPosition = 5
         addChild(levelTimerLabel)
@@ -98,9 +98,9 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
                 ])
         ))
         
-        //let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
-        //backgroundMusic.autoplayLooped = true
-        //addChild(backgroundMusic)
+        let backgroundMusic = SKAudioNode(fileNamed: "background-music-aac.caf")
+        backgroundMusic.autoplayLooped = true
+        addChild(backgroundMusic)
     }
     
     func random() -> CGFloat {
@@ -208,20 +208,20 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if isFingerOnPlayer1 {
-            let touch = touches.first
-            let touchLocation = touch!.location(in: self)
-            let previousLocation = touch!.previousLocation(in: self)
-            offset1 = touchLocation - previousLocation
-            var playerY = player1.position.y + (touchLocation.y - previousLocation.y)
+            let touch1 = touches.first
+            let touchLocation1 = touch1!.location(in: self)
+            let previousLocation1 = touch1!.previousLocation(in: self)
+            offset1 = touchLocation1 - previousLocation1
+            var playerY1 = player1.position.y + (touchLocation1.y - previousLocation1.y)
             
-            playerY = max(playerY, player1.size.height/2)
-            playerY = min(playerY, size.height - player1.size.height/2)
+            playerY1 = max(playerY1, player1.size.height/2)
+            playerY1 = min(playerY1, size.height - player1.size.height/2)
             
             
-            var playerX = player1.position.x + (touchLocation.x - previousLocation.x)
+            var playerX1 = player1.position.x + (touchLocation1.x - previousLocation1.x)
             
-            playerX = max(playerX, player1.size.width/2)
-            playerX = min(playerX, size.width - player1.size.width/2)
+            playerX1 = max(playerX1, player1.size.width/2)
+            playerX1 = min(playerX1, size.width - player1.size.width/2)
             
             // Determine offset of location to flip
             if (offset1.x <= 0 && player1.xScale>0) {
@@ -233,32 +233,32 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
                 flame1.xScale = flame1.xScale * -1;
             }
             
-            var flameX = CGFloat()
+            var flameX1 = CGFloat()
             if (player1.xScale > 0) {
-                flameX = -30
+                flameX1 = -30
             } else {
-                flameX = 30
+                flameX1 = 30
             }
             
-            player1.position = CGPoint(x: playerX, y: playerY)
-            flame1.position = CGPoint(x: player1.position.x + flameX, y: player1.position.y-24)
+            player1.position = CGPoint(x: playerX1, y: playerY1)
+            flame1.position = CGPoint(x: player1.position.x + flameX1, y: player1.position.y-24)
         }
         
         if isFingerOnPlayer2 {
-            let touch = touches.first
-            let touchLocation = touch!.location(in: self)
-            let previousLocation = touch!.previousLocation(in: self)
-            offset2 = touchLocation - previousLocation
-            var playerY = player2.position.y + (touchLocation.y - previousLocation.y)
+            let touch2 = touches.first
+            let touchLocation2 = touch2!.location(in: self)
+            let previousLocation2 = touch2!.previousLocation(in: self)
+            offset2 = touchLocation2 - previousLocation2
+            var playerY2 = player2.position.y + (touchLocation2.y - previousLocation2.y)
             
-            playerY = max(playerY, player2.size.height/2)
-            playerY = min(playerY, size.height - player2.size.height/2)
+            playerY2 = max(playerY2, player2.size.height/2)
+            playerY2 = min(playerY2, size.height - player2.size.height/2)
             
             
-            var playerX = player2.position.x + (touchLocation.x - previousLocation.x)
+            var playerX2 = player2.position.x + (touchLocation2.x - previousLocation2.x)
             
-            playerX = max(playerX, player2.size.width/2)
-            playerX = min(playerX, size.width - player2.size.width/2)
+            playerX2 = max(playerX2, player2.size.width/2)
+            playerX2 = min(playerX2, size.width - player2.size.width/2)
             
             // Determine offset of location to flip
             if (offset2.x <= 0 && player2.xScale>0) {
@@ -270,15 +270,15 @@ class GameSceneMultiplayer: SKScene, SKPhysicsContactDelegate {
                 flame2.xScale = flame2.xScale * -1;
             }
             
-            var flameX = CGFloat()
+            var flameX2 = CGFloat()
             if (player2.xScale > 0) {
-                flameX = -30
+                flameX2 = -30
             } else {
-                flameX = 30
+                flameX2 = 30
             }
             
-            player2.position = CGPoint(x: playerX, y: playerY)
-            flame2.position = CGPoint(x: player2.position.x + flameX, y: player2.position.y-24)
+            player2.position = CGPoint(x: playerX2, y: playerY2)
+            flame2.position = CGPoint(x: player2.position.x + flameX2, y: player2.position.y-24)
         }
     }
     
